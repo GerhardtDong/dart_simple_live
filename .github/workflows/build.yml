@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Java
@@ -21,10 +21,10 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable
+          channel: stable
           cache: true
 
-      - name: Install dependencies
+      - name: Install deps
         run: flutter pub get
 
       - name: Build APK
@@ -38,30 +38,31 @@ jobs:
 
 
   build-windows:
-    name: Build Windows EXE
+    name: Build Windows MSIX
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable
+          channel: stable
           cache: true
 
-      - name: Enable Windows Desktop
+      - name: Enable Windows
         run: flutter config --enable-windows-desktop
 
-      - name: Install dependencies
+      - name: Install deps
         run: flutter pub get
 
-      - name: Build Windows
-        run: flutter build windows
+      - name: Build Windows MSIX
+        run: flutter build windows --msix
 
-      - name: Upload Windows Build
+      - name: Upload Windows MSIX
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-App
-          path: build/windows/runner/Release/**
+          name: Windows-MSIX
+          path: |
+            build/windows/**/*.msix
