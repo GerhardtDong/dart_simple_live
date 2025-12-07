@@ -1,16 +1,14 @@
-name: Build Android APK & Windows MSIX
+name: Build Android & Windows
 
 on:
   workflow_dispatch:
 
 jobs:
   build-android:
-    name: Build Android
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -28,11 +26,11 @@ jobs:
         working-directory: simple_live_app
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build APK (debug, no keystore)
         working-directory: simple_live_app
-        run: flutter build apk
+        run: flutter build apk --debug
 
-      - name: Upload Android APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Android-APK
@@ -40,12 +38,10 @@ jobs:
 
 
   build-windows:
-    name: Build Windows MSIX
     runs-on: windows-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -61,11 +57,15 @@ jobs:
         working-directory: simple_live_app
         run: flutter pub get
 
-      - name: Build Windows MSIX
+      - name: Init MSIX
         working-directory: simple_live_app
-        run: flutter build windows --msix
+        run: flutter pub run msix:create
 
-      - name: Upload Windows MSIX
+      - name: Build Windows
+        working-directory: simple_live_app
+        run: flutter build windows
+
+      - name: Upload MSIX
         uses: actions/upload-artifact@v4
         with:
           name: Windows-MSIX
