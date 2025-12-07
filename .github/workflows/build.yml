@@ -1,11 +1,11 @@
-name: Build Android & Windows
+name: Build Android APK & Windows MSIX
 
 on:
   workflow_dispatch:
 
 jobs:
   build-android:
-    name: Build Android APK
+    name: Build Android
     runs-on: ubuntu-latest
 
     steps:
@@ -25,16 +25,18 @@ jobs:
           cache: true
 
       - name: Install deps
+        working-directory: simple_live_app
         run: flutter pub get
 
       - name: Build APK
+        working-directory: simple_live_app
         run: flutter build apk
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: Android-APK
-          path: build/app/outputs/flutter-apk/*.apk
+          path: simple_live_app/build/app/outputs/flutter-apk/*.apk
 
 
   build-windows:
@@ -51,18 +53,20 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Enable Windows
+      - name: Enable Windows Desktop
+        working-directory: simple_live_app
         run: flutter config --enable-windows-desktop
 
       - name: Install deps
+        working-directory: simple_live_app
         run: flutter pub get
 
       - name: Build Windows MSIX
+        working-directory: simple_live_app
         run: flutter build windows --msix
 
       - name: Upload Windows MSIX
         uses: actions/upload-artifact@v4
         with:
           name: Windows-MSIX
-          path: |
-            build/windows/**/*.msix
+          path: simple_live_app/build/windows/**/*.msix
